@@ -1,0 +1,231 @@
+function varargout = Project(varargin)
+% PROJECT MATLAB code for Project.fig
+%      PROJECT, by itself, creates a new PROJECT or raises the existing
+%      singleton*.
+%
+%      H = PROJECT returns the handle to a new PROJECT or the handle to
+%      the existing singleton*.
+%
+%      PROJECT('CALLBACK',hObject,eventData,handles,...) calls the local
+%      function named CALLBACK in PROJECT.M with the given input arguments.
+%
+%      PROJECT('Property','Value',...) creates a new PROJECT or raises the
+%      existing singleton*.  Starting from the left, property value pairs are
+%      applied to the GUI before Project_OpeningFcn gets called.  An
+%      unrecognized property name or invalid value makes property application
+%      stop.  All inputs are passed to Project_OpeningFcn via varargin.
+%
+%      *See GUI Options on GUIDE's Tools menu.  Choose "GUI allows only one
+%      instance to run (singleton)".
+%
+% See also: GUIDE, GUIDATA, GUIHANDLES
+
+% Edit the above text to modify the response to help Project
+
+% Last Modified by GUIDE v2.5 10-Aug-2019 00:13:43
+
+% Begin initialization code - DO NOT EDIT
+gui_Singleton = 1;
+gui_State = struct('gui_Name',       mfilename, ...
+                   'gui_Singleton',  gui_Singleton, ...
+                   'gui_OpeningFcn', @Project_OpeningFcn, ...
+                   'gui_OutputFcn',  @Project_OutputFcn, ...
+                   'gui_LayoutFcn',  [] , ...
+                   'gui_Callback',   []);
+if nargin && ischar(varargin{1})
+    gui_State.gui_Callback = str2func(varargin{1});
+end
+
+if nargout
+    [varargout{1:nargout}] = gui_mainfcn(gui_State, varargin{:});
+else
+    gui_mainfcn(gui_State, varargin{:});
+end
+% End initialization code - DO NOT EDIT
+
+
+% --- Executes just before Project is made visible.
+function Project_OpeningFcn(hObject, eventdata, handles, varargin)
+% This function has no output args, see OutputFcn.
+% hObject    handle to figure
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+% varargin   command line arguments to Project (see VARARGIN)
+
+% Choose default command line output for Project
+handles.output = hObject;
+
+% Update handles structure
+guidata(hObject, handles);
+
+% UIWAIT makes Project wait for user response (see UIRESUME)
+% uiwait(handles.figure1);
+
+
+% --- Outputs from this function are returned to the command line.
+function varargout = Project_OutputFcn(hObject, eventdata, handles) 
+% varargout  cell array for returning output args (see VARARGOUT);
+% hObject    handle to figure
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Get default command line output from handles structure
+varargout{1} = handles.output;
+
+
+
+function edit1_Callback(hObject, eventdata, handles)
+% hObject    handle to edit1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edit1 as text
+%        str2double(get(hObject,'String')) returns contents of edit1 as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function edit1_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function edit2_Callback(hObject, eventdata, handles)
+% hObject    handle to edit2 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edit2 as text
+%        str2double(get(hObject,'String')) returns contents of edit2 as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function edit2_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit2 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on button press in pushbutton1.
+function pushbutton1_Callback(hObject, eventdata, handles)
+name = get(handles.edit1,'string');
+record_len = 5;         %Record time length in seconds
+sample_freq = 8192;    %Sampling frequency in Hertz
+sample_time = sample_freq * record_len;
+file_name = sprintf('%s.wav',name);
+option_rec = get(handles.edit2,'string');
+if option_rec=='y'
+        record = audiorecorder( sample_freq,8,1);       %Records the input through the sound card to the variable with specified sampling frequency
+        recordblocking(record,5);
+        x=getaudiodata(record);
+        audiowrite(file_name,x,sample_freq);  %Save the recorded data to a file with the specified file name in .wav format
+        set(handles.text4,'string',"SAVED");
+end
+voice=audioread(file_name);
+x=voice; 
+x=x';
+x=x(1,:);
+x=x';
+y1=audioread('Bring_Mobile.wav');
+y1=y1';
+y1=y1(1,:);
+y1=y1';
+z1=xcorr(x,y1);
+m1=max(z1);
+l1=length(z1);
+t1=-((l1-1)/2):1:((l1-1)/2);
+t1=t1';
+%subplot(3,2,1);
+axes(handles.axes1);
+plot(t1,z1);
+y2=audioread('Developer.wav');
+y2=y2';
+y2=y2(1,:);
+y2=y2';
+z2=xcorr(x,y2);
+m2=max(z2);
+l2=length(z2);
+t2=-((l2-1)/2):1:((l2-1)/2);
+t2=t2';
+%subplot(3,2,2);
+figure
+axes(handles.axes4);
+plot(t2,z2);
+y3=audioread('Fill_Water.wav');
+y3=y3';
+y3=y3(1,:);
+y3=y3';
+z3=xcorr(x,y3);
+m3=max(z3);
+l3=length(z3);
+t3=-((l3-1)/2):1:((l3-1)/2);
+t3=t3';
+%subplot(3,2,3);
+figure
+axes(handles.axes5);
+plot(t3,z3);
+y4=audioread('Turn_On_Fan.wav');
+y4=y4';
+y4=y4(1,:);
+y4=y4';
+z4=xcorr(x,y4);
+m4=max(z4);
+l4=length(z4);
+t4=-((l4-1)/2):1:((l4-1)/2);
+t4=t4';
+%subplot(3,2,4);
+figure
+axes(handles.axes6);
+plot(t4,z4);
+%y5=audioread('Newuser.wav');
+%y5=y5';
+%y5=y5(1,:);
+%y5=y5';
+%z5=xcorr(x,y5);
+%m5=max(z5);
+%l5=length(z5);
+%t5=-((l5-1)/2):1:((l5-1)/2);
+%t5=t5';
+%figure 
+%plot(t5,z5);
+m7=2;
+a=[m1 m2 m3 m4 m7];
+m=max(a);
+if m<=m1
+    soundsc(audioread('1_bringing_Mobile.wav'),8192)
+    pause(2)    
+       set(handles.text5,'string'," BRINGING MOBILE PHONE ");
+elseif m<=m2
+    soundsc(audioread('2_Owner.wav'),8192)
+    pause(2)    
+        set(handles.text5,'string'," FOUNDED BY ADARSH KUMAR ");
+elseif m<=m3
+    soundsc(audioread('3_Filling_Water.wav'),8192)
+    pause(2)    
+        set(handles.text5,'string'," FILLING WATER IN BOTTLE ");
+elseif m<=m4
+    soundsc(audioread('4_Turn_fan_On.wav'),8192)
+    pause(2)    
+    	set(handles.text5,'string'," TURNING ON FAN ");
+%elseif m<=m5
+%    soundsc(audioread('New_User.wav'),8192)
+%    pause(2)    
+    %soundsc(h,8192)
+%        msgbox(' NEW USER ACCEPTED ');
+else
+   soundsc(audioread('0_Fail.wav'),8192)
+   set(handles.text5,'string'," NOT FOUND IN DATABASE ");
+end
